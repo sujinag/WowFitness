@@ -64,8 +64,8 @@ struct MyClients: View {
                                         .font(.custom("times-bold", size: fixedScreenBounds.width / 20))
                                     
                                     
-                                    //                                Text(client.gender ?? "")
-                                    //                                    .font(.subheadline)
+                                    // Text(client.gender ?? "")
+                                    // .font(.subheadline)
                                     Text(client.status ?? "")
                                         .font(.subheadline)
                                     Text("DueDate:\(dateToString(date: client.dueDate ?? Date()))")

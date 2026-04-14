@@ -233,7 +233,7 @@ class DatabaseCombine: ObservableObject {
         if !searchText.isEmpty {
             list = list.filter {
                 ($0.name ?? "").lowercased().contains(searchText.lowercased()) ||
-                ($0.mobileNumber ?? "").contains(searchText)
+                ($0.mobileNumber ?? "").contains(searchText) || ($0.status ?? "").lowercased().contains(searchText.lowercased())
             }
         }
         
@@ -460,6 +460,33 @@ class DatabaseCombine: ObservableObject {
     }
     
     func updateStatusUsingDueDate() {
+
+        let context = DatabasePersistent.shared.persistentContainer.viewContext
+        let request: NSFetchRequest<NewClient> = NewClient.fetchRequest()
+
+        do {
+            let clients = try context.fetch(request)
+            let today = Date()
+
+            for client in clients {
+
+                if let due = client.dueDate {
+
+                    if today >= due {
+                        client.status = "Unpaid"   // expired
+                    } else {
+                        client.status = "Paid"     // still active
+                    }
+                }
+            }
+
+            try context.save()
+
+        } catch {
+            print("❌ Error updating statuses:", error.localizedDescription)
+        }
+    }
+    /*func updateStatusUsingDueDate() {
         let context = DatabasePersistent.shared.persistentContainer.viewContext
         let request: NSFetchRequest<NewClient> = NewClient.fetchRequest()
 
@@ -478,10 +505,11 @@ class DatabaseCombine: ObservableObject {
             }
 
             try context.save()
+            
         } catch {
             print("❌ Error updating statuses:", error.localizedDescription)
         }
-    }
+    }*/
     func updateStatusesIfNeeded() {
         let context = DatabasePersistent.shared.persistentContainer.viewContext
         let request: NSFetchRequest<NewClient> = NewClient.fetchRequest()
