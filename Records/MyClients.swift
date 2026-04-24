@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import MessageUI
 struct MyClients: View {
 //    init() {
 //            UITableView.appearance().backgroundColor = .clear
@@ -24,20 +24,41 @@ struct MyClients: View {
                 
                 VStack {
                     
-                    // ---- SEARCH BAR ----
-                    TextField("Search…", text: $viewModel.searchText)
-                        .padding(10)
-//                        .background(Color(.systemGray6))
-//                        .cornerRadius(10)
-                        .background(.white.opacity(0.8))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                       // .shadow(color: Color.black, radius: 0.2, y: 0.2)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.black.opacity(0.5))
-                        )
+                    HStack {
+                        // ---- SEARCH BAR ----
+                        TextField("Search…", text: $viewModel.searchText)
+                            .padding(10)
+                        //                        .background(Color(.systemGray6))
+                        //                        .cornerRadius(10)
+                            .background(.white.opacity(0.8))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        // .shadow(color: Color.black, radius: 0.2, y: 0.2)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.black.opacity(0.5))
+                            )
+                        
+                            .padding(.horizontal)
+                        
+                        Button("Remind All")
+                        {
+                            let unpaid = viewModel.filteredTrainerClients.filter { $0.status == "Unpaid" }
+                            let numbers = unpaid.compactMap { $0.mobileNumber }
+                             print("UnPaid-Numbers",numbers)
+                            let msg = "Your WoW Gym Subscription is due. Please renew."
 
-                        .padding(.horizontal)
+                            
+                            sendBulkSMS(numbers: numbers, message: msg)
+                            if MFMessageComposeViewController.canSendText() {
+                                print("Can send SMS ✅")
+                            } else {
+                                print("Cannot send SMS ❌")
+                            }
+                            
+                        }
+                        
+                        
+                    }
                     
                     // ---- SEGMENTED CONTROL ----
                     Picker("Filter", selection: $viewModel.selectedFilter) {
@@ -113,7 +134,19 @@ struct MyClients: View {
 
         }
     
-    } //MyCleintsView
+
+    func sendBulkSMS(numbers: [String], message: String) {
+        guard MFMessageComposeViewController.canSendText() else { return }
+
+        let vc = MFMessageComposeViewController()
+        vc.recipients = numbers
+        vc.body = message
+
+        // present vc from your view controller
+    }
+    
+   
+} //MyCleintsView
 
 struct MyClients_Previews: PreviewProvider {
     static var previews: some View {
