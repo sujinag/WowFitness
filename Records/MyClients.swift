@@ -40,8 +40,9 @@ struct MyClients: View {
                         
                             .padding(.horizontal)
                         
-                        Button("Remind All")
-                        {
+                        Button{
+                        print("Reminder pressed")
+                        
                             let unpaid = viewModel.filteredTrainerClients.filter { $0.status == "Unpaid" }
                             let numbers = unpaid.compactMap { $0.mobileNumber }
                              print("UnPaid-Numbers",numbers)
@@ -55,6 +56,16 @@ struct MyClients: View {
                                 print("Cannot send SMS ❌")
                             }
                             
+                        }label: {
+
+                            ZStack(alignment: .topTrailing) {
+
+                                Image(systemName: "bell.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.red)
+
+                                 
+                            }
                         }
                         
                         

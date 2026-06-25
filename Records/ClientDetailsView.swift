@@ -343,7 +343,7 @@ struct ClientDetailsView: View {
                             
                             
                         }
-                        .background(.black.opacity(0.5))
+                        .background(.black)
                         .cornerRadius(6)
                         
                     } //Button Vstack
